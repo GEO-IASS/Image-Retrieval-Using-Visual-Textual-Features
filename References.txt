@@ -1,0 +1,2 @@
+i) List of stop words
+http://www.webconfs.com/stop-words.php 

@@ -1,0 +1,98 @@
+Submitter:
+
+	108771077 : SAGARDEEP MAHAPATRA
+	108800494 : BISWARANJAN PANDA	
+
+1. Description of Lexicon used in part 2.
+
+The lexicon we have constructed is based on the input query supplied. To construct the
+lexicon, we first extract all words contained in the query text and store them in a cell
+array. Once these are stored, we filter this array to store only the unique bag of words. 
+Next, we filter out stop words from this collection using a sample list of stop words 
+that we obtained from the internet (http://www.webconfs.com/stop-words.php). 
+This gives us our lexicon. 
+
+Motivation for using such a lexicon:
+
+Since we are searching images similar to the query image here, we thought that building
+a large lexicon which has words that do not appear in the query text wouldn't help much.
+There are two main disadvantages of a bigger lexicon.
+
+i) Computing a huge lexicon dynamically each time the program is run slows down the program
+drastically.
+ii) A bigger lexicon will have additional words that do not occur in the query. The count
+of these words, hence would be 0 for the query vector and therefore would not contribute 
+effectively to the distance (ssd) computation.
+
+2) Description of how performance varied with alpha 
+The different values of alpha we selected here were 50:50 , 30:70, and 80:20
+for the (image ssd,text ssd) pair respectively. 
+
+We observed that for a particular alpha (for example in case of 50:50 weightage)
+the results differed for different queries. In cases where our query image was a bag
+or flat shoe, the results were good. However, the results were too bad when searching
+for pumps. 
+
+In the 30:70 case, the results were similar with the pumps query producing bad results
+returning 4 bags as the search result.The result sequence however was different.
+
+In the 80:20 case, the results were slightly better for the pumps query.
+
+
+
+3). Description of where the algorithms worked and where it did not.
+
+The image only comparison algorithm. 
+
+This algorithm is fairly straightforward with no surprises. It calculates similarity
+by comparing ssds between the gray scale color components of the query image and the
+database images. Hence, the algorithm works pretty well when the query image has a color
+very distinct from the background. For example a black bag in a white background matches
+well with other black bags of similar shape in light backgrounds. However, this approach
+does not work well when the object is in a background whose color intensity is almost similar
+as the object. This is because in this case the algorithm finds it difficult to isolate the
+query object from the rest of the image. Similar is the case for the database images it is
+being compared with.
+
+
+The text only comparison algorithm.
+
+The initial approach which our text based algorithm used was to just obtain a word vector for
+the query and each of the databases images and calculate the ssds. However this approach didn't
+perform vert well because of two major flaws.
+
+i) We had not normalized the word vectors. Hence the euclidean distances obtained by calculating
+ssds didnot truly reflect the actual similarity between the different word vectors resulting in 
+false results.
+
+ii) No stop words had been removed. This resulted in a problem in short query texts with 
+some stop words. Matching of these stop words with stop words in unrelated documents resulted in
+arbitrary results in some cases. 
+
+Therefore, by removing stop words and normalizing all word vectors, we could obtain better results.
+
+
+The combined text and image algorithm.
+
+As we see, the key thing in this algorithm is how we select the alpha value. The algorithm performed 
+better for certain alpha values and didnt work so well for other values of alpha. Also keeping alpha
+constant, the algorithm performed differently for different query images. For example, with a 50:50 alpha
+value, the results were much better when the query was a flat shoe or a bag but were bad  when the query
+was a 'pumps'. In the end, we decided on dynamically assigning alpha values for calculating each combined ssd.
+The method we use to decide on the alpha value compares the text and image ssd obtained for each object. A 
+higher weighted priority (greater alpha value) is assigned to the lesser of the two ssds. Selecting such an 
+alpha returns much better matches.
+
+ 
+4). Description of implementation and results of part 4.
+
+In part 4, we thought of deviating from the ssd approach and calculate similarities based on the 
+cosine similarity approach. Our algorithm works on text comparison. However here instead of ssds
+we calculate the cosine of the angles between the different word vectors. One observation from our
+algorithm was the cosine (or angle) calculating between two different vectors does not depend on
+the vector length. Hence, even by skipping the normalization part and by just calculating cosines, 
+we can obtain very good document matches. This in turn can help in speeding up the previous ssd
+based text comparison algorithm.
+
+ 
+ 
